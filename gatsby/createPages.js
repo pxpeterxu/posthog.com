@@ -268,29 +268,31 @@ module.exports = exports.createPages = async ({ actions, graphql }) => {
     })
 
     result.data.apidocs.nodes.forEach((node) => {
+        const slug = replacePath(node.url)
         let next = null
         let previous = null
         let breadcrumb = null
-        // const tableOfContents = formatToc(node.headings)
-        // docsMenuFlattened.some((item, index) => {
-        //     if (item.url === slug) {
-        //         next = docsMenuFlattened[index + 1]
-        //         previous = docsMenuFlattened[index - 1]
-        //         breadcrumb = item.breadcrumb
-        //         return true
-        //     }
-        // })
+        docsMenuFlattened.some((item, index) => {
+            if (item.url === slug) {
+                next = docsMenuFlattened[index + 1]
+                previous = docsMenuFlattened[index - 1]
+                breadcrumb = item.breadcrumb
+                return true
+            }
+        })
 
         createPage({
-            path: replacePath(node.url),
+            path: slug,
             component: ApiEndpoint,
             context: {
                 id: node.id,
-                // next,
-                // previous,
+                slug,
+                menu: docsMenu,
+                next,
+                previous,
                 // menu: docsMenu,
-                // breadcrumb,
-                // breadcrumbBase: { name: 'Docs', url: '/docs' },
+                breadcrumb,
+                breadcrumbBase: { name: 'Docs', url: '/docs' },
                 // tableOfContents,
                 // slug,
             },
